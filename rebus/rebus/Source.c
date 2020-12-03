@@ -4,8 +4,18 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
+#include <math.h>
 #define MAX 10
-#define MAX_LENGTH 1000
+#define MAX_LENGTH 100
+#define MAX_WORDS 7
+#define ZERO 48
+#define NINE 57
+#define A 65
+#define Z 90
+#define a 97
+#define z 122
+#define NOT_FOUND -1
+
 typedef struct
 {
 	int v;
@@ -17,6 +27,7 @@ enum
 	LETTERS_TO_NUMBERS,
 	NUMBERS_TO_LETTERS
 };
+
 
 char getLetter(char* str, bool* isbegining)
 {
@@ -104,25 +115,34 @@ int ReadyString(char* str, bool* success, int* tries)
 	(*tries)++;
 	return 1;
 }
-char* solve(char* str, LetterAndValue* LetterAndValue_list, int* tries)
+char* solveExpression(char* str, LetterAndValue* LetterAndValue_list, int* tries, int* wordsLen, int answerLen)
 {
-	char strNumbers[MAX_LENGTH]; char* result = NULL;
+	static char strNumbers[MAX_LENGTH];
+	char* result = NULL;
 	bool isbegining = false; bool success = false;
+	int still_Letters = 0;
+	/* Массивы для хранения слагаемых и ответа */
+	static char words[MAX_WORDS][MAX_LENGTH] = { 0 };
+	static char answer[MAX_LENGTH] = { 0 };
 	strncpy(strNumbers, str, strlen(str) + 1);
-	if (ReadyString(strNumbers, &success, tries) == 1)
+	/* Разделяем строку на слагаемые и ответ */
+	tokeniseString(strNumbers, words, answer);
+	/* Проверка, что ребус готов*/
+	checkReady(strNumbers, words, answer, &still_Letters, &success, tries, wordsLen, answerLen);
+	/* Если флаг success не выставлен, значит суммы последних цифр не совпадают,
+	дальше перебор не продолжаем, возвращаемся на уровенб выше и там меняем значения*/
+	if (success)
 	{
-		if (success) return strNumbers;
-		else return 0;
+		if (!still_Letters) /* Получили ответ, возвращаем его, иначе продолжаем перебор*/
+		{
+			return strNumbers;
+		}
 	}
-
+	else
+		return 0;
 	char letter;
-	letter = getLetter(strNumbers, &isbegining);
-	for (; findNum(letter, LetterAndValue_list) != -1;)
-	{
-		letter = getLetter(strNumbers, &isbegining);
-		if (letter == '\0') return 0;
-	}
-
+	letter = getLetter(strNumbers, &isbegining, words, answer);
+	if (letter == '\0') return 0;
 	int count = 0;
 	if (isbegining)count = 1;
 	for (count; count <= 10; count++)
@@ -135,10 +155,9 @@ char* solve(char* str, LetterAndValue* LetterAndValue_list, int* tries)
 		else continue;
 
 		StringReplacement(str, strNumbers, LetterAndValue_list, LETTERS_TO_NUMBERS);
-		result = (solve(strNumbers, LetterAndValue_list, tries));
+		result = (solveExpression(strNumbers, LetterAndValue_list, tries, wordsLen, answerLen));
 		if (!result)
 		{
-
 
 			StringReplacement(letter, strNumbers, LetterAndValue_list, NUMBERS_TO_LETTERS);
 			LetterAndValue_list[count].c = NULL;
@@ -158,15 +177,25 @@ void list_init(LetterAndValue* LetterAndValue_list)
 }
 int main()
 {
-	char string[MAX_LENGTH];
+	char string[MAX_LENGTH]; int wordsLen[MAX_WORDS]; static char words[MAX_WORDS][MAX_LENGTH] = { 0 };
+	static char answer[MAX_LENGTH] = { 0 };
+	int answerLen;
 	int tries = 0;
 	LetterAndValue LetterAndValue_list[MAX];
 	list_init(&LetterAndValue_list);
 	clock_t start, stop;
 	printf("%s\n", "Enter expression:");
 	gets(string);
+	tokeniseString(string, words, answer);
+	/* Заполняем данные о длине ответа и слагаемых */
+	for (int i = 0; i < MAX_WORDS && words[i][0]; i++)
+	{
+		wordsLen[i] = strlen(words[i]);
+	}
+	answerLen = strlen(answer);
 	start = clock();
-	printf("%s\n", solve(string, LetterAndValue_list, &tries));
+	char str[1024];
+	printf("%s\n", solveExpression(string, LetterAndValue_list, &tries, wordsLen, answerLen));
 	stop = clock();
 	printf("Number of tries: %d\n", tries);
 	printf("execution took %.3f seconds", ((float)(stop - start) / CLK_TCK));
