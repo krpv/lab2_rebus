@@ -84,37 +84,95 @@ void StringReplacement(char* strLetters, char* strNumbers, LetterAndValue* Lette
 	break;
 	}
 }
-int ReadyString(char* str, bool* success, int* tries)
+void tokeniseString(char* str, char words[][MAX_LENGTH], char* answer)
 {
-	int n = 0; int answer = 0; char digit[2]; int numbers[7] = { 0 }; int i = 0;
+	int i = 0;
+	int j = 0;
+	int wordsCount = 0;
 	for (i; str[i] != '='; i++)
 	{
-		if (isalpha(str[i])) return 0;
-		if (str[i] == '+') n++;
-		if (isdigit(str[i]))
+		if ((ZERO <= str[i] && str[i] <= NINE) || (A <= str[i] && str[i] <= Z) || (a <= str[i] && str[i] <= z))
 		{
-			digit[0] = str[i];
-			numbers[n] = numbers[n] * 10 + atoi(digit);
+			words[wordsCount][j] = str[i];
+			j++;
+		}
+		if (str[i] == '+')
+		{
+			wordsCount++;
+			j = 0;
 		}
 	}
+	j = 0;
 	for (i; str[i] != '\0'; i++)
 	{
-		if (isalpha(str[i]))
-			return 0;
-		if (isdigit(str[i]))
+		if ((ZERO <= str[i] && str[i] <= NINE) || (A <= str[i] && str[i] <= Z) || (a <= str[i] && str[i] <= z))
 		{
-			digit[0] = str[i];
-			answer = answer * 10 + atoi(digit);
+			answer[j] = str[i];
+			j++;
 		}
 	}
-	int sum = 0;
-	for (int i = 0; i < n + 1; i++)
-		sum += numbers[i];
-	if (sum == answer)
-		*success = 1;
-	(*tries)++;
-	return 1;
+
 }
+void checkReady(char* str, char words[][MAX_LENGTH], char* answer, int* still_Letters, bool* success, int* tries, int* wordsLen, int answerLen)
+{
+	int sumNum[MAX_WORDS] = { 0 }; int sumAnswer = 0;
+	/* Идем по по словам пока нет букв и не превышаем размер ответа*/
+	char c; char digit[2] = { '\0' };
+	int minDigits = 0; //минимальное число проставленных цифр, максимальное значение, которое принимает - длина ответа
+	for (int i = 1; !*still_Letters && i <= answerLen; i++)
+	{
+		for (int j = 0; !*still_Letters && words[j][0]; j++)
+		{
+			/* Берем цифры из слагаемых, начиная с конца */
+			c = words[j][wordsLen[j] - i];
+			if (ZERO <= c && c <= NINE)
+			{
+				digit[0] = c;
+				/*Считаем слагаемое с конца*/
+				sumNum[j] += atoi(digit) * (int)pow(10, minDigits);
+			}
+			if ((A <= c && c <= Z) || (a <= c && c <= z))
+			{
+				*still_Letters = 1;
+			}
+		}
+		c = answer[answerLen - i];
+		if (ZERO <= c && c <= NINE)
+		{
+			digit[0] = c;
+			/*Считаем ответ с конца*/
+			sumAnswer += atoi(digit) * (int)pow(10, minDigits);
+		}
+		if ((A <= c && c <= Z) || (a <= c && c <= z))
+		{
+			*still_Letters = 1;
+		}
+		if (*still_Letters == 0)
+		{
+			minDigits++;
+		}
+	}
+	int sumAll = 0;
+	for (int i = 0; i < MAX_WORDS; i++)//
+	{
+		sumAll += sumNum[i];
+	}
+	if (!minDigits)//если ==0, т.е. зашли в первый раз
+		*success = true;
+	if (!*still_Letters)
+	{
+		if (sumAll == sumAnswer)
+			*success = true;
+	}
+	else
+	{   /* Сумма последних цифр сланаемых равна числу в ответе*/
+		int numDivider = (int)pow(10, minDigits);
+		if (sumAll % numDivider == sumAnswer % numDivider)
+			*success = true;
+	}
+	(*tries)++;
+}
+
 char* solveExpression(char* str, LetterAndValue* LetterAndValue_list, int* tries, int* wordsLen, int answerLen)
 {
 	static char strNumbers[MAX_LENGTH];
