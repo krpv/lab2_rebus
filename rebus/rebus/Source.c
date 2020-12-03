@@ -28,22 +28,53 @@ enum
 	NUMBERS_TO_LETTERS
 };
 
-
-char getLetter(char* str, bool* isbegining)
+char getLetter(char* str, bool* isWordBeginning, char words[][MAX_LENGTH], char* answer)
 {
-	char c; int i = 0;
-	for (i = 0; i <= strlen(str); i++)
+	char letter = 0;
+	char c = 0;
+	int found = 0;
+	int strlenWords[MAX_WORDS];
+	for (int i = 0; i < MAX_WORDS && words[i][0]; i++)
+		strlenWords[i] = strlen(words[i]);
+	int strlenAnswer = strlen(answer);
+
+	for (int i = 1; !found; i++)
 	{
-
-		if (isalpha(str[i]) || str[i] == '\0')
+		for (int j = 0; words[j][0] && !found; j++)
 		{
-			c = str[i];
-			if (i == 0 || str[i - 1] == ' ') *isbegining = true;
-			break;
-		}
 
+			c = words[j][strlenWords[j] - i];
+			if ((A <= c && c <= Z) || (a <= c && c <= z))
+			{
+				letter = c;
+				found = 1;
+			}
+		}
+		c = answer[strlenAnswer - i];
+		if ((A <= c && c <= Z) || (a <= c && c <= z))
+		{
+			letter = c;
+			found = 1;
+		}
 	}
-	return c;
+
+	if (found && checkWordBeginning(letter, str))
+		*isWordBeginning = true;
+
+	return letter;
+}
+int checkWordBeginning(char c, char* str)
+{
+	if (str[0] == c)
+		return 1;
+	int i = 1;
+	while (str[i])
+	{
+		if (str[i] == c && str[i - 1] == ' ')
+			return 1;
+		i++;
+	}
+	return 0;
 }
 int findNum(char* str, LetterAndValue* LetterAndValue_list)
 {
@@ -51,7 +82,7 @@ int findNum(char* str, LetterAndValue* LetterAndValue_list)
 	{
 		if (LetterAndValue_list[j].c == str) return LetterAndValue_list[j].v;
 	}
-	return -1;
+	return NOT_FOUND;
 }
 void StringReplacement(char* strLetters, char* strNumbers, LetterAndValue* LetterAndValue_list, int operation)
 {
@@ -64,7 +95,7 @@ void StringReplacement(char* strLetters, char* strNumbers, LetterAndValue* Lette
 		for (int i = 0; strLetters[i] != '\0'; i++)
 		{
 			num = findNum(strLetters[i], LetterAndValue_list);
-			if (num != -1)
+			if (num != NOT_FOUND)
 			{
 				_itoa(num, c, 10);
 				strNumbers[i] = c[0];
@@ -84,6 +115,7 @@ void StringReplacement(char* strLetters, char* strNumbers, LetterAndValue* Lette
 	break;
 	}
 }
+
 void tokeniseString(char* str, char words[][MAX_LENGTH], char* answer)
 {
 	int i = 0;
