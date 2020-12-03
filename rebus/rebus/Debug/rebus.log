@@ -1,0 +1,22 @@
+﻿  Source.c
+C:\Users\admin\lab2\rebus\rebus\Source.c(24,16): warning C4018: <=: несоответствие типов со знаком и без знака
+C:\Users\admin\lab2\rebus\rebus\Source.c(41,38): warning C4047: ==: "int" отличается по уровням косвенного обращения от "char *"
+C:\Users\admin\lab2\rebus\rebus\Source.c(55,31): warning C4047: функция: "char *" отличается по уровням косвенного обращения от "char"
+C:\Users\admin\lab2\rebus\rebus\Source.c(55,28): warning C4024: findNum: различные типы для формального и фактического параметров 1
+C:\Users\admin\lab2\rebus\rebus\Source.c(58,10): warning C4013: _itoa: нет определения; предполагается "extern" с возвратом типа "int"
+C:\Users\admin\lab2\rebus\rebus\Source.c(71,57): warning C4047: =: "char" отличается по уровням косвенного обращения от "char *"
+C:\Users\admin\lab2\rebus\rebus\Source.c(86,39): warning C4013: atoi: нет определения; предполагается "extern" с возвратом типа "int"
+C:\Users\admin\lab2\rebus\rebus\Source.c(120,23): warning C4047: функция: "char *" отличается по уровням косвенного обращения от "char"
+C:\Users\admin\lab2\rebus\rebus\Source.c(120,17): warning C4024: findNum: различные типы для формального и фактического параметров 1
+C:\Users\admin\lab2\rebus\rebus\Source.c(130,43): warning C4047: ==: "int" отличается по уровням косвенного обращения от "void *"
+C:\Users\admin\lab2\rebus\rebus\Source.c(143,28): warning C4047: функция: "char *" отличается по уровням косвенного обращения от "char"
+C:\Users\admin\lab2\rebus\rebus\Source.c(143,22): warning C4024: StringReplacement: различные типы для формального и фактического параметров 1
+C:\Users\admin\lab2\rebus\rebus\Source.c(144,39): warning C4047: =: "char" отличается по уровням косвенного обращения от "void *"
+C:\Users\admin\lab2\rebus\rebus\Source.c(145,39): warning C4047: =: "int" отличается по уровням косвенного обращения от "void *"
+C:\Users\admin\lab2\rebus\rebus\Source.c(155,34): warning C4047: =: "char" отличается по уровням косвенного обращения от "void *"
+C:\Users\admin\lab2\rebus\rebus\Source.c(156,34): warning C4047: =: "int" отличается по уровням косвенного обращения от "void *"
+C:\Users\admin\lab2\rebus\rebus\Source.c(164,32): warning C4047: функция: "LetterAndValue *" отличается по уровням косвенного обращения от "LetterAndValue (*)[10]"
+C:\Users\admin\lab2\rebus\rebus\Source.c(164,12): warning C4024: list_init: различные типы для формального и фактического параметров 1
+C:\Users\admin\lab2\rebus\rebus\Source.c(167,6): warning C4013: gets: нет определения; предполагается "extern" с возвратом типа "int"
+C:\Users\admin\lab2\rebus\rebus\Source.c(114): warning C4172: возвращение адреса локальной или временной переменной : strNumbers
+  rebus.vcxproj -> C:\Users\admin\lab2\rebus\Debug\rebus.exe
